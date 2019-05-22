@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"> 
+    <title>&#65279;</title>
+  </head>
+  <body>
+    <script>
+      function getURLParameter(sParam) {
+        var sPageURL = window.location.search.substring(1);
+        var sURLVariables = sPageURL.split('&');
+        for (var i = 0; i < sURLVariables.length; i++) {
+          var sParameterName = sURLVariables[i].split('=');
+          if (sParameterName[0] == sParam) 
+          {
+            return sParameterName[1];
+          }
+        }
+      }
+
+      window.onload = function() {
+        var inputColor = getURLParameter('color');
+        var inputTitle = getURLParameter('title');
+
+        var favicon = document.createElement('link');
+        favicon.id = "favicon"
+        favicon.rel = "icon"
+        document.head.appendChild(favicon);
+        const faviconSize = 16;
+
+        var canvas = document.createElement('canvas');
+        canvas.height = faviconSize;
+        canvas.width = faviconSize;
+
+        var context = canvas.getContext('2d');        
+        context.fillStyle = "#" + (inputColor ? inputColor : "ffffff");
+        context.fillRect(0, 0, faviconSize, faviconSize);
+
+        favicon.href = canvas.toDataURL('image/png');
+
+        document.title = (inputTitle ? inputTitle : document.title);
+      }
+    </script>
+  </body>
+</html>
