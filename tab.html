@@ -3,43 +3,161 @@
   <head>
     <meta charset="UTF-8"> 
     <title>&#65279;</title>
+    <link id="favicon" rel="icon"></link>
   </head>
+  <style>
+    input {
+      width: 100%;
+      margin: 8px 0;
+      display: inline-block;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    input[type=text] {
+      padding: 12px 20px;
+    }
+    input[type=color] {
+      padding: 0px 0px;
+      height: 41px;
+    }
+  </style>
   <body>
     <script>
       function getURLParameter(sParam) {
-        var sPageURL = window.location.search.substring(1);
-        var sURLVariables = sPageURL.split('&');
-        for (var i = 0; i < sURLVariables.length; i++) {
-          var sParameterName = sURLVariables[i].split('=');
+        let sPageURL = window.location.search.substring(1);
+        let sURLVariables = sPageURL.split('&');
+        for (let i = 0; i < sURLVariables.length; i++) {
+          let sParameterName = sURLVariables[i].split('=');
           if (sParameterName[0] == sParam) 
           {
             return sParameterName[1];
           }
         }
+        return "";
       }
 
-      window.onload = function() {
-        var inputColor = getURLParameter('color');
-        var inputTitle = getURLParameter('title');
+      function initTitleAndColor(title, color) {
+        document.titleTab = title;
+        document.colorTab = color;
+        updateUrl();
+        updateInputTitle();
+        updateInputColor();
+        updateTitle();
+        updateFavicon();
+      }
 
-        var favicon = document.createElement('link');
-        favicon.id = "favicon"
-        favicon.rel = "icon"
-        document.head.appendChild(favicon);
+      function setTitle(title) {
+        document.titleTab = title;
+        updateUrl();
+        updateInputTitle();
+        updateTitle();
+      }
+
+      function getTitle() {
+        return document.titleTab;
+      }
+
+      function updateTitle() {
+        let title = getTitle()
+        if (title == "") {
+          title = '\u200E';
+        }
+        document.title = title;
+      }
+
+      function setColor(color) {
+        document.colorTab = color;
+        updateUrl();
+        updateInputColor();
+        updateFavicon();
+      }
+
+      function getColor() {
+        return document.colorTab;
+      }
+
+      function updateFavicon() {
+        let favicon = document.getElementById('favicon');
         const faviconSize = 16;
 
-        var canvas = document.createElement('canvas');
+        let canvas = document.createElement('canvas');
         canvas.height = faviconSize;
         canvas.width = faviconSize;
 
-        var context = canvas.getContext('2d');        
-        context.fillStyle = "#" + (inputColor ? inputColor : "ffffff");
+        let currentColor = getColor();
+
+        let context = canvas.getContext('2d');        
+        context.fillStyle = (currentColor ? "#" + currentColor : "#ffffff");
         context.fillRect(0, 0, faviconSize, faviconSize);
 
         favicon.href = canvas.toDataURL('image/png');
+      }
 
-        document.title = (inputTitle ? inputTitle : document.title);
+      function updateUrl() {
+        let currentTitle = getTitle();
+        let currentColor = getColor();
+        let url = "/tab.html"
+        let params = {};
+        if (currentTitle && currentTitle != "") {
+          params["title"] = currentTitle;
+        }
+        if (currentColor && currentColor != "") {
+          params["color"] = currentColor;
+        }
+
+        let str = [];
+        for(let param in params) {
+          str.push(param + "=" + params[param]);
+        }
+
+        if (str.length > 0) {
+          url += '?';
+          url += str.join("&").toString();
+        }
+
+        window.history.replaceState(null, currentTitle, url);
+      }
+
+      function updateInputTitle() {
+        let elmtInputTitle = document.getElementById('title');
+        elmtInputTitle.value = getTitle();
+      }
+
+      function updateInputColor() {
+        let elmtInputColor = document.getElementById('color');
+        let currentColor = getColor();
+        if (currentColor) {
+          elmtInputColor.value = "#" + getColor();
+        }
+      }
+
+      window.onload = function() {
+
+        let elmtInputTitle = document.getElementById('title');
+        elmtInputTitle.addEventListener('input', (event) => {
+          setTitle(event.target.value);
+        });
+
+        let elmtInputColor = document.getElementById('color')
+        elmtInputColor.addEventListener('input', (event) => {
+          let color = (event.target.value).replace('#', '');
+          setColor(color);
+        });
+
+        // Init title from parameter
+        let paramTitle = decodeURI(getURLParameter('title'));
+        let paramColor = getURLParameter('color');
+        initTitleAndColor(paramTitle, paramColor);
       }
     </script>
+    <div>
+      <label>Title:</label>
+      <input id="title" type="text"></input>
+    </div>
+    <div>
+      <label>Color:</label>
+      <input id="color" type="color" value="#ffffff"></input>
+    </div>
   </body>
 </html>
