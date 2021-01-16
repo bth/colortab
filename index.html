@@ -97,7 +97,7 @@
       function updateUrl() {
         let currentTitle = getTitle();
         let currentColor = getColor();
-        let url = "/tab.html"
+        let url = window.location.pathname;
         let params = {};
         if (currentTitle && currentTitle != "") {
           params["title"] = currentTitle;
