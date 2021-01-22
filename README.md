@@ -6,7 +6,13 @@ This work on any browser and without installing any extension.
 
 ## How does it work?
 
-1. Download this file: https://github.com/bth/colortab/raw/master/tab.html
+### Online version
+
+1. Go to https://bth.github.io/colortab/
+
+### Offline version
+
+1. Download this file: https://github.com/bth/colortab/raw/master/index.html
 2. Open this file in your browser
 
 For example, if you save the file on `C:/Temp/tab.html` you can put `C:/Temp/tab.html` in the URL bar of your browser.
